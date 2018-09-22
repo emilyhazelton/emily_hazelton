@@ -1,0 +1,12 @@
+name: "Emily Hazelton"
+output_dir: "."
+navbar:
+   title: "Emily Hazelton"
+   left:
+      - text: "Home"
+        href: index.html
+      - text: "Projects"
+        href: projects.html
+output:
+   html_document:
+      theme: flatly
