@@ -1,0 +1,691 @@
+---
+Title: EDA on Prosper Loans
+---
+
+## The Data Set {#top}
+
+This report explores loan data provided by the online lender Prosper.The data 
+spans from November, 2005 to March, 2014, with 113,937 observations. 
+
+The data used in this exploration was tidied and provided by Udacity for the EDA
+learning section of their online Data Analysis degree. The original set included
+81 variables, and my instructions were to evaluate 10-15 variables for my EDA. I 
+chose the following variables: 
+
+* Loan amount
+* Loan term months
+* Loan status current
+* Employment status
+* Credit score lower
+* Credit score upper
+* Debt income ratio
+* Stated income monthly
+* Principal paid
+* Interest and fees paid
+* Estimated return
+
+I follow a standard EDA process in this project, progressing from 
+[univariate](#univariate) to [bivariate](#bivariate) to 
+[multivariate](#multivariate) explorations. In the [summary](#summary) section, 
+I pick three visualizations from the EDA. These graphs are what I would 
+communicate to stakeholders to share what I learned during my exploration.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+library(tidyverse)
+library(GGally)
+```
+
+```{r include=FALSE}
+# Load the Data
+loans_full_set <- read.csv('prosperLoanData.csv')
+
+# Select variables of interest(instructions are to look at 10-15 variables)
+loans <- select(loans_full_set, 
+                LoanOriginalAmount, Term, LoanStatus, EmploymentStatus, 
+                EmploymentStatusDuration,  CreditScoreRangeLower, 
+                CreditScoreRangeUpper, DebtToIncomeRatio, StatedMonthlyIncome,  
+                LP_CustomerPrincipalPayments, LP_InterestandFees, 
+                EstimatedReturn)
+
+loans <- rename(loans,
+       loan_amount = LoanOriginalAmount,
+       loan_term_months = Term,
+       loan_status_current = LoanStatus,
+       employment_status = EmploymentStatus,
+       employment_duration_months = EmploymentStatusDuration,
+       credit_score_lower = CreditScoreRangeLower,
+       credit_score_upper = CreditScoreRangeUpper,
+       debt_income_ratio = DebtToIncomeRatio,
+       stated_income_monthly = StatedMonthlyIncome,
+       principal_paid = LP_CustomerPrincipalPayments,
+       interest_and_fees_paid = LP_InterestandFees,
+       estimated_return = EstimatedReturn
+       )
+
+```
+
+# Univariate Exploration {#univariate}
+
+[Back to Top](#top)
+
+Loan amounts cluster vary, with many loans equal to or less than $10,000. The 
+most frequent loan amounts are $4,000, $15,000, $10,000, and $5,000.
+
+```{r echo=FALSE}
+ggplot(loans, aes(loan_amount)) +
+  geom_histogram(binwidth = 250) +
+  coord_cartesian(xlim = c(0,25000))
+```
+
+The loan terms in this data set fall into three bins: 12, 36, or 60 months, with 
+36 months being the most common. Since there are only 3 discrete values, I am 
+going to change the vector type from integer to a factor, so I can graph it
+categorically in the bivariate section. I would also find the length-of-loan 
+variable easier to interpret as 1, 3, or 5 years.
+
+```{r echo=FALSE}
+#factor loan_term_months based on observations in previous graph
+loans$loan_term_years <- factor(loans$loan_term_months / 12)
+ggplot(loans, aes(loan_term_years)) +
+  geom_bar()
+```
+
+It looks like borrowers' credit scores are normally distributed, 
+with the peak in the 685-695 bin. 
+
+```{r echo=FALSE}
+#average the upper and lower credit scores so it's easier to visualize and 
+#compare to other variables laater
+loans <- mutate(loans, 
+    credit_score_average = (credit_score_upper + credit_score_lower)/2)
+
+ggplot(aes(x=credit_score_average), data = loans) +
+  geom_histogram(binwidth = 10) +
+  scale_x_continuous(limits = c(400, 900))
+```
+
+It looks like the most commonly occurring loan statuses are current, completed, 
+and charged off. A charged off loan is one where the borrower defaulted and any
+remaining loan balance will likely not be collected. 
+
+```{r echo=FALSE}
+ggplot(aes(x = loan_status_current), data = loans) + 
+  geom_bar() +
+  coord_flip()
+```
+
+Monthly income appears to be normally distributed around a peak of about $3,000, 
+with a long tail out into higher values.
+
+```{r echo=FALSE}
+ggplot(aes(x=stated_income_monthly), data = loans) +
+  geom_histogram(binwidth = 500) +
+  xlim(0,15000)
+```
+
+Most borrowers are mployeed. I don't have access to the metadata to understand 
+the difference between full-time and employed.
+
+```{r echo=FALSE}
+ggplot(loans, aes(employment_status)) +
+  geom_bar() +
+  coord_flip()
+```
+
+Employment duration:
+
+```{r echo=FALSE}
+loans <- mutate(loans,
+                employment_duration_years = employment_duration_months/ 12)
+
+ggplot(loans, aes(employment_duration_years)) +
+  geom_histogram(binwidth = .5) +
+  xlim(0,20)
+```
+
+
+```{r echo=FALSE}
+summary(loans$employment_duration_years)
+```
+
+I created a new variable called lender_profit_current. The formula is principal 
+paid plus interest and fees paid minus the original loan amount. 
+
+```{r echo=FALSE}
+loans <- mutate(loans,
+       lender_profit_current = principal_paid + interest_and_fees_paid - 
+       loan_amount)
+    
+ggplot(aes(x = lender_profit_current), data = loans) +
+  geom_histogram(binwidth = 500) + 
+  xlim(c(-25000,10000))
+
+summary(loans$lender_profit_current)
+``` 
+
+
+The following graph shows lender_profit_current for only Completed or Chargedoff 
+loans. It looks like closed loans are more scewed to positive profit for the 
+bank than all loans (open and closed). This makes sense.
+
+```{r echo=FALSE}
+#what are distinct factors in loans$loan_status_current?
+unique(loans$loan_status_current)
+
+closed_loans <- filter(loans, loan_status_current == 'Completed' | 
+                         loan_status_current == 'Chargedoff')
+
+ggplot(aes(x = lender_profit_current), data = closed_loans) +
+  geom_histogram(binwidth = 500) + 
+  xlim(c(-25000,10000))
+
+summary(closed_loans$lender_profit_current)
+```
+
+Mean bank profit on closed loans: Average profit of $21.12 seems low to me.
+
+```{r echo=FALSE}
+summary(closed_loans$lender_profit_current)
+```
+
+*** Making switch to check out just closed loans -- look at historical trends
+pleted loans are loans where the borrower completely paid off the original 
+loan amount. 24.0 percent of closed loans are in the Chargedoff category. 
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_status_current)) + geom_bar()
+```
+
+### Bivariate Analysis - Charged Off and Completed Loans Only
+
+The spread for closed loans leans more towards smaller loans than the full
+Prosper set. Perhaps consumers were asking for smaller loans historically, or
+perhaps Prosper was more conservative in how much funding they would award to 
+consumers as they refined their profit predictions -- I don't have a way to find
+the answer to that question with the dataset that I have. 
+
+Most popular loans: $4,000, $5,000, $3,000, $2,000
+
+With these smaller loan sizes, this smaller profit makes more sense. This data
+was also collected over the span of the recession, so interest rates would have
+been very low during that time. That also helps explain the low ROI per loan.
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_amount)) +
+  geom_histogram(binwidth = 250) +
+  coord_cartesian(xlim = c(0,25000))
+```
+
+Three-year loans are still the  most common. In relation to the 3-year loans, 
+there are proportionally more 1-year loans and less 5-year loans as compared
+to the full Prosper loan dataset. 
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_term_years)) +
+  geom_bar()
+```
+
+Average Credit Score 
+
+```{r}
+ggplot(closed_loans, aes(credit_score_average)) +
+  geom_histogram(binwidth = 10) +
+  xlim(c(400,900))
+```
+
+
+```{r}
+ggplot(closed_loans, aes(stated_income_monthly)) +
+    geom_histogram(binwidth = 500) +
+  xlim(0,15000)
+
+summary(closed_loans$stated_income_monthly)
+```
+
+```{r}
+ggplot(closed_loans, aes(employment_status)) +
+  geom_bar() +
+  coord_flip()
+```
+
+This graph shows what the bank estimated the return to be when they funded the
+loan. It looks like there is a spread between 0.025 and 0.2 (or 2.5 to 20 
+percent of return on investment).
+
+```{r echo=FALSE}
+closed_loans %>%
+  filter(!is.na(estimated_return)) %>%
+  ggplot(aes(estimated_return)) +
+    geom_histogram(binwidth = .01) +
+    coord_cartesian(xlim = c(-0.1,0.25))
+```
+
+
+```{r echo=FALSE}
+closed_loans <- mutate(closed_loans,
+    actual_return = lender_profit_current / loan_amount)
+
+ggplot(closed_loans, aes(actual_return)) + 
+  geom_histogram(binwidth = .025) 
+```
+
+Most loans are profitable for the bank, with more common profits ranging from 
+just breaking even (.0) to 50 percent (.5). There is a strange peak above 0.5,
+and I'm not sure why that is. If I were working for Prosper, I would definitely
+look at that. But for the sake of this project, I'm going to move past it. 
+
+The formula I used for acual return was lender_profit_current divided by 
+loan_amount. 
+
+
+```{r echo=FALSE}
+
+#difference <- closed_loans$actual_return - closed_loans$estimated_return
+
+#head(difference, 10)
+# graph isn't working -- need to figure out why there are na values in result
+# I didn't think I had na values in actual_return
+# ggplot(difference, aes(difference)) + geom_histogram()
+```
+
+
+```{r echo=FALSE}
+closed_loans %>%
+  filter(!is.na(debt_income_ratio)) %>%
+  ggplot(aes(debt_income_ratio)) +
+    geom_histogram(binwidth = 0.5)
+```
+
+And zoomed in to remove that outlier column:
+
+```{r echo=FALSE}
+closed_loans %>%
+  filter(!is.na(debt_income_ratio)) %>%
+  ggplot(aes(debt_income_ratio)) +
+    geom_histogram(binwidth = 0.05) +
+    xlim(0,1.5)
+```
+
+The graph peaks at the 0.125-0.175 bin (or 12.5 to 17.5 percent debt-to-income
+ratio).
+
+ 
+Did some transformations. 
+Now, I have the following variables to move into the bivariate analysis: 
+
+```{r echo=FALSE}
+# Re-order columns to make more sense logically; drop variables that I am not
+# going to look at further.
+
+closed_loans <- select(closed_loans, 
+                       loan_status_current, loan_term_years, estimated_return, 
+                       loan_amount, principal_paid, interest_and_fees_paid, 
+                       lender_profit_current, actual_return, employment_status,
+                       employment_duration_years, stated_income_monthly, 
+                       credit_score_average, debt_income_ratio)
+
+dim(closed_loans)
+```
+
+```{r echo=FALSE}
+names(closed_loans)
+```
+
+
+## Bivariate Exploration {#bivariate}
+
+[Back to Top](#top)
+
+Let's start by looking at the correlations between different variables. 
+```{r echo=FALSE}
+ggcorr(closed_loans, label = TRUE)
+```
+
+It looks like there may be a negative correlation between annual income and 
+estimated return. My primary factor of interest is estimated_return (displayed
+across the bottom). Some of the strong correlations -- between principal paid
+and loan_amount or actual_return and lender_profit_current -- are obvious because
+the variables do have an explicit relationship. 
+
+
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(closed_loans, aes(credit_score_average,actual_return)) +
+  geom_point(alpha = .05) +
+  xlim(400,900) +
+  geom_hline(yintercept=0, color = 'red', size = 1)
+```
+
+It doesn't look like I will be able to use credit score in a predictive model
+for actual return. I really expected more of a correlation. It does look like
+individuals who have a score over 800 are a very safe bet for investment.
+Perhaps the overplotting on this graph is hiding a trend that is there. 
+
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(credit_score_average, actual_return)) +
+  geom_boxplot(aes(group = cut_width(credit_score_average,10))) +
+  coord_cartesian(xlim = c(440,880), ylim = c(-.75,1)) +
+  geom_hline(yintercept = 0, color='red', size=1) 
+```
+
+It looks like the median return is above 0 for all ranges except those
+centering at 450 and below. And the peak in the median return occurs at a 
+credit score of 570. 
+
+With this graph, it looks like there is a pattern in the relationship between
+credit score and return. Those with poor or fair credit scores are bringing the
+highest rate of return. This is likely because these individuals pay higher 
+interest rates. 
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_term_years,actual_return)) +
+  geom_boxplot()
+```
+
+It looks like three-year loans have the highest median percentage of return. And
+it looks like Prosper is losing the most money on five-year loans. In fact, 
+almost half of five-year loans are losing money.
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_amount, actual_return)) +
+  geom_point(alpha = .05) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+Here we see the effects of overplotting within the bands of most common loan
+amounts. It does look like the return falls much more above 0, which is good
+for Prosper. Let's take a look at this with a boxplot grouping to see where 
+the medians lie by $1,000 bins.
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(loan_amount,actual_return)) +
+  geom_boxplot(aes(group = cut_width(loan_amount, 1000))) +
+  xlim(0,25500) +
+  coord_cartesian(ylim = c(-.5,.5)) +
+geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+Return is above 0 for all loan amounts. There really is no evidence of variation
+in the loan amount changing the ROI. 
+
+
+```{r echo=FALSE}
+ggplot(closed_loans,aes(debt_income_ratio,actual_return)) +
+  geom_point(alpha = .1) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+The relationship between bank profit and stated monthly income doesn't seem
+to have a linear pattern, but an outlier is seriously skewing the x scale of 
+that graph, so I'm going to zoom in.
+
+```{r echo=FALSE}
+ggplot(closed_loans,aes(debt_income_ratio,actual_return)) +
+  geom_point(alpha = .1) +
+  coord_cartesian(xlim=c(-.25,2.5)) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+It seems as though a higher debt_income_ratio (DIR) is related to a higher 
+profit. There seem to be some tiers to the data, althought it is still hard to see 
+due to overplotting. But it seems that there are jumps in the level of profit at
+both 0.25 and 0.5 marks for DIR.
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(reorder(employment_status,actual_return, FUN = median), 
+  actual_return)) +
+  geom_boxplot() +
+  coord_flip() 
+```
+
+These are some strange tiers, with redundancy. My guess is that the option set 
+changed at some point in data collection. For example "employed" was later 
+changed to two options -- "part-time" and "full-time."
+
+```{r echo=FALSE}
+closed_loans %>%
+  #ignore fields that are: blank, 'Not available,' and 'Other'
+  filter(employment_status == 'Employed' | 
+         employment_status == 'Full-time' |
+         employment_status == 'Not employed' |
+         employment_status == 'Part-time' |
+         employment_status == 'Retired' |
+         employment_status == 'Self-employed'   ) %>%
+  ggplot(aes(actual_return, y = ..density..)) +
+    geom_freqpoly(aes(color=employment_status),binwidth=.025)
+```
+
+The plot shows density, so that the count of each category doesn't scew the 
+graph. The graph shows a proportion for each category.
+
+It is surprising to me that those with an employment_status of 'employed' bring
+Prosper a lower actual_return. However, I know that some of the data collection
+criteria changed in 2009, based on the data dictionary. I don't know exactly
+when the employment_status optionset would have changed. But if 'Employed' is 
+from an earlier date, it's not a good comparison (because there are many 
+environmental differences that could make a difference if the data was collected
+during two different time periods).
+
+Let's zoom in to the peak area of this graph.
+
+```{r echo=FALSE}
+closed_loans %>%
+  #ignore fields that are: blank, 'Not available,' and 'Other'
+  filter(employment_status == 'Employed' | 
+         employment_status == 'Full-time' |
+         employment_status == 'Not employed' |
+         employment_status == 'Part-time' |
+         employment_status == 'Retired' |
+         employment_status == 'Self-employed'   ) %>%
+  ggplot(aes(actual_return, y = ..density..)) +
+    geom_freqpoly(aes(color=employment_status),binwidth=.025) +
+    xlim(c(0,0.5))
+```
+
+It's interesting that retired and part-time individuals seem to peak at a higher
+actual_return rate. Perhaps it is a similar phenomenon to why Prosper makes a 
+better return for those with lower credit scores -- perhaps these individuals 
+are assigned a higher interest rate. 
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(employment_duration_years,actual_return)) +
+  geom_point(alpha = .1) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(employment_duration_years,actual_return)) +
+  geom_boxplot(aes(group = cut_width(employment_duration_years,1))) +
+  xlim(0,20) +
+  ylim(-.5,.5) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(stated_income_monthly,actual_return)) +
+  geom_point(alpha = .1) +
+  xlim(0,200000) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+ 
+```{r echo=FALSE}
+ggplot(closed_loans, aes(stated_income_monthly,actual_return)) +
+  geom_boxplot(aes(group = cut_width(stated_income_monthly,10000))) +
+  xlim(0,200000) +
+  ylim(-.5,.5) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+It looks like debt-to-income ratio is higher in the middle regions of the 
+credit score range. I believe that debt to income ratio is one factor that
+influences credit score, so it makes sense that those with an excellent credit
+score would have a low debt to income ratio. I wonder if those with a score 
+under 530 simply have a harder time getting a loan and therefore don't have as 
+much debt.
+
+```{r echo=FALSE}
+ggplot(closed_loans, aes(factor(credit_score_average), debt_income_ratio)) +
+  geom_boxplot() +
+  coord_cartesian(ylim = c(0,1)) +
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+
+* Is a longer employment history correlated with a better credit score?
+A longer employment duration does not appear to correlate with a better 
+credit score.
+
+```{r echo=FALSE}
+closed_loans %>%
+  filter(employment_status == 'Employed' | employment_status == 'Full-time' |
+           employment_status == 'Part-time' | 
+           employment_status == 'Self-employed') %>%
+  ggplot(aes(credit_score_average, employment_duration_years)) +
+    geom_point(alpha = .1) +
+    xlim(450,850)
+```
+
+### Bivariate Summary
+
+Loan term covaried with actual return. The return for one-year loans was mostly
+positive, but not much more than 0. Three-year loans brought in the highest 
+return. Five-year loans were responsible for the most lost in return. 
+
+Credit score also varied with actual return. Credit scores centering right under 
+600 actually brought the highest level of return. 
+
+Otherwise, I really didn't find any other patterns of covariation. 
+
+## Multivariate Exploration {#multivariate}
+
+[Back to Top](#top)
+
+Question:
+
+* Does loan term in years add any meaningful pattern to a graph of actual_return
+and credit_score_average?
+
+```{r echo=FALSE, Multivariate_Plots}
+ggplot(closed_loans, aes(factor(credit_score_average), actual_return, 
+                         fill=factor(loan_term_years))) +
+  geom_boxplot() +
+  scale_fill_brewer(type='seq', guide=guide_legend(title='Loan Term')) +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+Within loans that are three years in duration (the most commonly occurring and
+easiest to see), it looks like the median return is highest in the upper 500s 
+and lower 600s. The median return steadily increases above a credit score of 
+630.
+
+```{r, echo=FALSE}
+ggplot(closed_loans, aes(credit_score_average,actual_return,
+                         color=employment_status)) +
+  geom_point(alpha = .5) +
+  xlim(400,900) +
+  geom_hline(yintercept=0, color = 'red', size = .75)
+```
+
+In this graph, we can see that the colors associated with 'not available,' 'not
+employed,' and 'other' occur more frequently in the lower credit scores, and 
+that employment of some type or retirement occurs more frequently in the higher 
+credit score ranges. 
+
+```{r echo=FALSE}
+ggplot(closed_loans,aes(debt_income_ratio,actual_return,
+                        color=employment_status)) +
+  geom_point(alpha = .5) +
+  coord_cartesian(xlim=c(-.25,2.5)) + stat_ellipse()
+```
+
+Adding employment status to this graph doesn't show any new insights. Debt-to-
+income ratio combined with empoyment status does not seem to build a pattern.
+
+------
+
+## Summary {#summary}
+
+[Back to Top](#top)
+
+This plot shows that most loans that have a positive return on investment. The 
+average return for a funded loan is 2.8 percent.
+
+```{r echo=FALSE, Plot_One}
+ggplot(closed_loans, aes(actual_return)) + 
+  geom_histogram(binwidth = .025) +
+  labs(title = 'Return on Investment for Loan Funding', x='Actual Return*', 
+       caption='*Actual return is profit as a percentage of initial loan 
+       amount.', y='Count')
+```
+
+```{r echo=FALSE}
+summarize(closed_loans,
+          mean_return_percent = mean(actual_return)*100,
+          median_return_percent = median(actual_return)*100)
+```
+
+Prosper gives out loans that are one, three, or five years in duration. Almost 
+90 percent of loans are provided with a three year term. The median return 
+for these loans is 13.6 percent. However, the average return is only 4 percent.
+Negative outliers are bringing the average lower than the median. 
+
+The median return for one-year loans is 5.9 percent, with average profit at 3.8
+percent. And the median return for five-year loans is 5.8 percent, with average
+profit at negative 13.4 percent. As can be seen in the graph above, the second
+quartile for five-year loans falls into a negative return. The five-year loan
+category is not profitable for Prosper. 
+
+```{r echo=FALSE, Plot_Two}
+ggplot(closed_loans, aes(loan_term_years, actual_return)) +
+  geom_boxplot() + 
+  labs(title ='Actual Return by Loan Duration', x='Loan Term (Years)', 
+       y='Actual Return*', caption = '*Actual return is profit as a percentage 
+       of initial loan amount.')
+```
+
+
+```{r echo=FALSE}
+closed_loans %>%
+  group_by(loan_term_years) %>%
+  summarize(
+    count = n(),
+    return_mean_percent = mean(actual_return, na.rm = TRUE)*100,
+    return_median_percent = median(actual_return, na.rm = TRUE)*100
+  )
+```
+
+This graph shows that the median profit is above 0 for almost all credit score
+categories except those below 470. However, if we look at the mean profit, 
+return becomes reliable above a credit score of 530.
+
+```{r echo=FALSE, Plot_Three}
+ggplot(closed_loans, aes(credit_score_average, actual_return)) +
+  geom_boxplot(aes(group = cut_width(credit_score_average,20))) +
+  coord_cartesian(xlim = c(440,880), ylim = c(-1,1.25)) +
+  geom_hline(yintercept=0, color = 'red', size = .75) + 
+  labs(title ='Actual Return by Borrower Credit Score', x='Credit Score', 
+    y='Actual Return*', caption = '*Actual return is profit as a percentage of 
+    initial loan amount.')
+```
+
+```{r echo=FALSE}
+closed_loans %>%
+  group_by(cut_width(credit_score_average,20)) %>%
+  summarize(
+    count = n(),
+    return_mean_percent = mean(actual_return, na.rm = TRUE)*100,
+    return_median_percent = median(actual_return, na.rm = TRUE)*100
+  ) %>% rename("bins" = "cut_width(credit_score_average, 20)")
+
+```
+
+
+### Further areas for investigation: 
+
+* How does early payoff impact actual return? That is, if a borrower pays their
+loan off early, I anticipate that actual return would be lower.  
+* Analyze the difference between estimated return and actual return. Focus on 
+areas where the bank anticipated profit but lost money. Is there a factor that
+their predictions should also take into account? Or is that just part of the 
+risk of the lending process (e.g. the exploration would not uncover additional 
+factors to create better predictive models of expected profit)? 

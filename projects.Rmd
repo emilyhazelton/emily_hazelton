@@ -2,4 +2,17 @@
 title: "Projects"
 ---
 
-Test Project Page! 
+*Section Under Construction -- I am working on cleaning up and adding projects* 
+*from my Data Analysis Nanodegree*
+
+## Analyzing ROI on Prosper Loan Data
+
+<img src="projects-prosper_files/figure-html/Plot_Two-1.png" style="max-width:
+500px;">
+
+I analyzed Prosper loan data collected between 2005 and 2014. Prosper is a
+marketplace for borrowers and lenders. Borrowers can request 1, 3, or 5-year loans,
+and loan sizes tend to be relatively small ($2,000 - $5,000). 
+
+[What characteristics are related to profitable loans?](projects-prosper.html)
+

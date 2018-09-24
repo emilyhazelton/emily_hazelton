@@ -1,0 +1,80 @@
+---
+title: "Resume"
+---
+
+[Skills](#Skills) | [Work Experience](#Work) | [Education](#Education)
+
+## What I Bring to the Team {#Skills}
+* SQL (4 years)
+* R (1+ year)
+* Microsoft Dynamics CRM (1 year)
+* Understanding of data normalization concepts
+* Delivers results and solves problems despite ambiguity and limited resources 
+* Strives for excellence through self-motivated learning and insatiable curiosity 
+* HTML and CSS 
+
+## Work Experience {#Work}
+
+### Business Analyst / Data Analyst 
+*[Behavioral Tech](https://behavioraltech.org), December 2017 to Present*
+
+* Led Microsoft Dynamics CRM implementation
+    * Wrote roadmap for implementing Sales, Marketing, and Customer Service 
+    modules 
+    * Launched new modules in CRM as the system administrator
+    * Trained staff members to use new functionality
+* Migrated historical customer and event data into CRM using SQL and R, 
+including deduplicating customer records from disparate sources   
+* Automated transfer of customer data from eCommerce website into CRM 
+* Built dashboards with Dynamics CRM and Power BI
+* Managed IT, website, and CRM vendors
+* Proactively analyzed telecom usage patterns in R to identify cost-cutting 
+opportunities
+* Built monthly financial forecast report in Excel using Pivot Table
+
+### Marketing and Information Systems Manager 
+*[Behavioral Tech](https://behavioraltech.org), August 2014 to November 2017*
+
+* Led multi-year project to reimagine company website while ensuring integrity 
+of business-critical data and minimal disruption to staff and customers
+    * Directed internal and consultant resources during full project lifecycle
+    * Rebuilt the website of our parent company in WordPress  
+    * Fixed bugs and updated reports on legacy site during transition 
+    * Created database documentation for old website and created project plan 
+    for cleaning and migrating data to new website   
+* Managed IT vendor during phone system implementation and migration to Office 365 
+*	Managed Technical Support Specialist, who provided guidance and support for 
+online training customers; provided backup technical support as needed
+* Managed all marketing activities
+    * Expanded marketing tactics using data-first approach to assess ROI on 
+    campaigns 
+    * Conducted first pay-per-click campaign, reorganized website landing page 
+    and navigational structure, and expanded value-added content in social media 
+    and eNewsletters
+    * Improved fill rate of public trainings from 67% to 87% between 2016 and 
+    2017 (20% increase in public training bookings)
+    * Recognized need for expanded staffing to move Marketing department 
+    objectives forward; defined requirements for new role; managed hiring and 
+    onboarding of new staff member
+    
+### Marketing and Website Coordinator 
+*[Behavioral Tech](https://behavioraltech.org), January 2012 to July 2014*
+
+* Supported marketing efforts: designed and updated flyers, email campaigns, 
+and web pages; managed social media accounts; evaluated impression and engagement 
+metrics 
+* Vetted venues for in-person trainings throughout the United States
+* Served as onsite event manager for training events 
+* Managed relationship with website developer; renewed domain names and SSL 
+certificates for corporate websites; applied HTML and CSS updates to web pages
+
+## Education {#Education}
+* 2018 &mdash; Q-Statistics, Seattle Central Community College (enrolled for Fall 2018)
+* 2018 &mdash; Data Analyst Nanodegree, Udacity &mdash; 
+[view my certificate](https://graduation.udacity.com/confirm/ZUKZCMVP)
+* 2017 &mdash; Calculus 1 and Calculus 2, Seattle Central Community College
+* 2016 &mdash; Digital Marketing Certificate, University of Washington
+* 2014 &mdash; Web Technology Solutions Certificate, University of Washington
+* 2010 &mdash; B.A. in Political Science, Minor in Economics, Minor in Spanish, 
+Seattle Pacific University
+
