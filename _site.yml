@@ -3,13 +3,12 @@ output_dir: "."
 navbar:
    title: "Emily Hazelton"
    left:
-      - text: "Projects"
+      - text: "Hire Me"
+        href: "index.html"
+      - text: "Portfolio"
         href: projects.html
-      - text: "Resume"
-        href: resume.html
-   right: 
-      - text: "Contact"
-        href: contact.html
+      - text: "Sustainability"
+        href: sustainability.html
 output:
    html_document:
       theme: flatly
