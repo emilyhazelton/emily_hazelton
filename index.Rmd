@@ -1,9 +1,22 @@
 ---
-title: "Hire Me"
+title: "Portfolio"
 ---
 
+<br/>
+  
+**<a href='washington-graduation-rates.html'>Washington State Graduation Rates in Power BI</a>**<br/>
 
-I am interested in data analytics, data science, and climate change. 
+I am working with Governor Inslee's Office, <a href='https://results.wa.gov/' target='blank'>Results WA</a>, to update outcome measures 
+that show the state's performance against specific initiatives. My first deliverable demonstrates my ability to visualize spatial data so that the viewer can interact with Wa-state graduation rates by county.  
 
-Check out my [LinkedIn profile](https://www.linkedin.com/in/emilyhazelton/) and 
-feel free to send me a direct message if you think there is a potential fit! 
+<br/>
+
+**<a href='vanarsdel-demo.html'>Vanarsdel Report Demo in Power BI</a>**<br/>
+
+This demo report shows annual sales trends for a fictional shoe retailer named Vanarsdel. I built this dashboard in a one-day training on Power BI.  
+
+<br/> 
+
+**<a href='blogdown-website.html'>Website with Blogdown in R</a>**
+
+I built this portfolio website using the R package Blogdown, which involved a number of skills!

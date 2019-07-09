@@ -1,0 +1,39 @@
+---
+title: "Vanarsdel Report Demo in Power BI"
+---
+
+<iframe width="933" height="700" src="https://app.powerbi.com/view?r=eyJrIjoiNTg1NWM3OTAtMWYyNS00ZDQ4LTgwZDktNjBkOWIwMmQzN2MyIiwidCI6ImRlMWExYmEzLTI1MzgtNDFkZi1iYzA0LTFiNjI5OGUyM2JiNiJ9" frameborder="0" allowFullScreen="true"></iframe>
+
+<br/>
+
+**Skills Utilized**
+
+I built the above dashboard in a one-day Power BI training by Invisio. Microsoft provided the sample dataset and instructions to create the dashboard. The exercise provided hands-on experience for a variety of tasks.
+
+First, we cleaned data tables in Power BI: 
+
+* Imported multiple CSVs with the same data structure from a single file folder
+* Built a relational model to connect the data
+* Changed data types for imported columns
+* Renamed columns and tables 
+* Filled missing data with "Fill Down" and "Fill Up" tool
+* Split character columns based on a custom delimiter 
+* Split character column on a complex pattern (not a simple delimiter) using Power BI's built-in AI
+* Removed top or bottom rows that were imported from CSV, but not actually part of the dataset
+* Transposed data (switched columns to rows; transformed data from wide to tall form)
+* Created a conditional column, with data dependent on a previously existing column
+* Disabled the load of a data table that was copied and merged into another table, to prevent loading that data twice 
+
+The utility of doing these data-cleaning tasks in Power BI is that you create a standardized process for cleaning and modeling data, so that you do not need to do it by hand each time.
+
+Second, we created a report in Power BI:
+
+* Created a data hierarchy, to allow drilling up and down on a specific visualization
+* Created a slicer to filter the data by a specific shoe brand by clicking on its logo
+* Turned off cross filtering for specific visualizations 
+* Created bookmarks to save a specific view, which can be used like a slide deck when presenting data findings
+* Created calculated columns to show percent growth over previous year
+* Created a conditional formatting rule to shade the cells of the matrix visualization based on percentage growth compared to the previous year
+* Loaded a background image to serve as a report template
+* Imported a custom color palette for visualizations
+* Created a gauge visualization to show sales against a target value (which was set to previous year's sales)

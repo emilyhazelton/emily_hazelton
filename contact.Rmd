@@ -1,13 +1,13 @@
 ---
-title: "Contact"
+title: "Contact Me"
 ---
 
-Contact Me: 
+<br/>
 
-* [Linked In](https://www.linkedin.com/in/emilyhazelton/) 
-* 425-686-2566 
-* e.r.[last name]@gmail.com 
+SQL | Database Design | R | Power BI | Excel | Google Analytics | Dynamics CRM
 
-GitHub: 
+<br/>
 
-* https://github.com/emilyhazelton
+Please visit my 
+<a href='https://www.linkedin.com/in/emilyhazelton/' target='blank'>LinkedIn profile</a>
+to learn more about my work and drop me a line!

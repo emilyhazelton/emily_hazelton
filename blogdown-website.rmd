@@ -1,0 +1,20 @@
+---
+title: "Website with Blogdown in R"
+---
+
+<br/>
+  
+**Skills Utilized**
+
+* *Research*: I studied tutorials online and the Blogdown documentation to learn
+the basics of creating a Blogdown website and then publishing it through Github.
+* *Try, fail, and update*: I believe that this is *the* most important skill for
+any programmer/data analyst. There are a lot of amazing help resources online. 
+With a mix of persistence, curiousity, and problem-solving skills, a savvy coder
+can get the job done as needed. 
+* *R Markdown*: I learned how to use R markdown, a way to ensure that R code 
+displays nicely in a browser.
+* *Github*: I am hosting this portfolio from 
+<a href='https://github.com/emilyhazelton' target='blank'>my Github profile</a>. 
+I have experience tracking code updates through Github on my local computer and 
+then publishing changes to my web account.

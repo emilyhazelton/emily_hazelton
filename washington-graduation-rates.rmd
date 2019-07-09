@@ -1,0 +1,26 @@
+---
+title: "Washington State Graduation Rates in Power BI"
+---
+
+<iframe width="933" height="700" src="https://app.powerbi.com/view?r=eyJrIjoiMjcxNzU3YjItMDdhYi00YTMwLTk5ZDQtYjA3NzI0NmFkZDYxIiwidCI6ImRlMWExYmEzLTI1MzgtNDFkZi1iYzA0LTFiNjI5OGUyM2JiNiJ9" frameborder="0" allowFullScreen="true"></iframe>
+
+<br/>
+
+**Skills Utilized**
+
+In order to build this visualization, I met with members of Results Washington to understand their goals for the project. They sent me the public dataset, with graduation rates by county and various demographic slices (all this data has been de-identified and is ready for public consumption). 
+
+I wanted to create an interactive map that would show each county's year-by-year performance. I started with the built-in choreopleth visualization, but I didn't like the overlay with Bing maps -- it made the shading very hard to interpret because the background was so busy. I downloaded a new visualization from the Power BI marketplace called a Shape Map and then found a JSON file that described Washington state and its counties. I imported that as a custom shape for the Shape Map visualization. Once I had my custom shape, it was much easier to understand the data. 
+The cross-filter functionality (where you click a county and the line chart shows the yearly county average) is standard in Power BI. However, I wanted to show a baseline of the average state performance, which should not move, along with the average for the selected county. I also wanted to display the name of the selected county. To accomplish this, I created a few measures using DAX (data analysis expression, a custom language for Power BI):
+
+* Sum of counties selected. If one county is selected, the measure displays the name of that county. If more than one county is selected, the measure displays "Washington State." 
+* The Washington State average, using DAX to ensure that it would ignore the county cross filtering. This baseline average always appears on the graph. 
+* The county average. This average will update to show either the county selected or the Washington State average if no county is selected. 
+
+<br/>
+
+**Next Steps**
+
+The <a href='https://results.wa.gov/' target='blank'>Results WA</a> team would also like to display graduation rates by racial and ethnic demographics. I will need to create either a second visualization or add this as a layer to the current report. 
+
+I will also need to incorporate a specific color palette for the visualization. 
