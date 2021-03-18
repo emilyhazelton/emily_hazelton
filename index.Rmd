@@ -1,5 +1,5 @@
 ---
-title: "Portfolio"
+title: "Portfolio TEST"
 ---
 
 <br/>
@@ -8,6 +8,9 @@ title: "Portfolio"
 
 I am working with Governor Inslee's Office, <a href='https://results.wa.gov/' target='blank'>Results WA</a>, to update outcome measures 
 that show the state's performance against specific initiatives. My first deliverable demonstrates my ability to visualize spatial data so that the viewer can interact with Wa-state graduation rates by county.  
+
+<br/>
+It was a cool project.
 
 <br/>
 
